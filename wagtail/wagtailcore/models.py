@@ -1696,6 +1696,9 @@ class PagePermissionTester(object):
         else:
             return False
 
+    def can_copy(self):
+        return not self.page.is_root()
+
     def can_unpublish(self):
         if not self.user.is_active:
             return False

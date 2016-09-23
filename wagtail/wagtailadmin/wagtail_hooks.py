@@ -96,7 +96,7 @@ def page_listing_more_buttons(page, page_perms, is_parent=False):
     if page_perms.can_move():
         yield Button(_('Move'), reverse('wagtailadmin_pages:move', args=[page.id]),
                      attrs={"title": _('Move this page')}, priority=10)
-    if not page.is_root():
+    if page_perms.can_copy():
         yield Button(_('Copy'), reverse('wagtailadmin_pages:copy', args=[page.id]),
                      attrs={'title': _('Copy this page')}, priority=20)
     if page_perms.can_delete():
