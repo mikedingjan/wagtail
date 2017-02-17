@@ -5,7 +5,8 @@ import logging
 from django.core.cache import cache
 from django.db.models.signals import post_delete, post_save, pre_delete
 
-from wagtail.wagtailcore.models import Page, Site
+from wagtail.wagtailcore import get_page_model
+from wagtail.wagtailcore.models import Site
 
 logger = logging.getLogger('wagtail.core')
 
@@ -31,6 +32,8 @@ def post_delete_page_log_deletion(sender, instance, **kwargs):
 
 
 def register_signal_handlers():
+    Page = get_page_model()
+
     post_save.connect(post_save_site_signal_handler, sender=Site)
     post_delete.connect(post_delete_site_signal_handler, sender=Site)
 

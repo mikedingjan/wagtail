@@ -834,6 +834,10 @@ class MyCustomPage(MyBasePage):
     pass
 
 
+class SwappedPage(AbstractPage):
+    pass
+
+
 class ValidatedPage(Page):
     foo = models.CharField(max_length=255)
 

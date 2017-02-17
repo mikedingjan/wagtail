@@ -1364,7 +1364,7 @@ class Page(AbstractPage):
     is_creatable = False
 
     class Meta(AbstractPage.Meta):
-        swappable = 'WAGTAILCORE_BASE_PAGE'
+        swappable = 'WAGTAILCORE_PAGE_MODEL'
         verbose_name = _('page')
         verbose_name_plural = _('pages')
 

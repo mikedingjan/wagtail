@@ -4,12 +4,16 @@ from django import template
 from django.core.cache import cache
 from django.http import HttpRequest
 from django.test import TestCase
+from django.core.exceptions import ImproperlyConfigured
+from django.test import TestCase, override_settings
 from django.utils.safestring import SafeText
 
 from wagtail.tests.testapp.models import SimplePage
 from wagtail.wagtailcore.models import Page, Site
 from wagtail.wagtailcore.templatetags.wagtailcore_tags import richtext
+from wagtail.wagtailcore import get_page_model_string, get_page_model
 from wagtail.wagtailcore.utils import resolve_model_string
+
 
 
 class TestPageUrlTags(TestCase):
@@ -226,3 +230,32 @@ class TestRichtextTag(TestCase):
     def test_call_with_none(self):
         result = richtext(None)
         self.assertEqual(result, '<div class="rich-text"></div>')
+
+
+class TestGetPageModel(TestCase):
+
+    def test_get_page_model_string(self):
+        self.assertEqual(get_page_model_string(), 'wagtailcore.Page')
+
+        with override_settings(WAGTAILCORE_PAGE_MODEL='testapp.CustomPage'):
+            self.assertEqual(get_page_model_string(), 'testapp.CustomPage')
+
+    def test_get_page_model(self):
+        page_model = get_page_model()
+        self.assertIs(page_model, Page)
+
+    @override_settings(WAGTAILCORE_PAGE_MODEL='tests.SwappedPage')
+    def test_custom_page_model(self):
+        page_model = get_page_model()
+        from wagtail.tests.testapp.models import SwappedPage
+        self.assertIs(page_model, SwappedPage)
+
+    @override_settings(WAGTAILCORE_PAGE_MODEL='unknown.UnknownPage')
+    def test_unknown_page_model(self):
+        with self.assertRaises(ImproperlyConfigured):
+            get_page_model()
+
+    @override_settings(WAGTAILCORE_PAGE_MODEL='invalid-string')
+    def test_invalid_page_model(self):
+        with self.assertRaises(ImproperlyConfigured):
+            get_page_model()
